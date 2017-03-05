@@ -54,7 +54,6 @@ enum class PlayerState {
 namespace detail {
 
 struct DeathAnimationState {
-  engine::TimeStepper mStepper;
   int mElapsedFrames = 0;
 };
 
@@ -62,12 +61,12 @@ struct DeathAnimationState {
 
 
 struct PlayerInputState {
-  bool mMovingLeft = false;
-  bool mMovingRight = false;
-  bool mMovingUp = false;
-  bool mMovingDown = false;
-  bool mJumping = false;
-  bool mShooting = false;
+  std::uint8_t mMovingLeft = false;
+  std::uint8_t mMovingRight = false;
+  std::uint8_t mMovingUp = false;
+  std::uint8_t mMovingDown = false;
+  std::uint8_t mJumping = false;
+  std::uint8_t mShooting = false;
 };
 
 
