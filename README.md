@@ -72,6 +72,11 @@ make
 ./src/RigelEngine <PATH_TO_YOUR_GAME_FILES>
 ```
 
+You can download the shareware version of the original game [here](https://archive.org/download/DukeNukemIi/4duke.zip).
+The file named `DN2SW10.SHR` from that archive contains the actual game files.
+It can be unpacked using `unzip`, other archive tools should work too. If not,
+you could also run the contained installer using DosBox.
+
 ### Jumping to specific levels, command line options
 
 Since most levels cannot be completed at the moment, only the first level of each episode is accessible
