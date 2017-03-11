@@ -271,6 +271,7 @@ void IngameMode::updateAndRender(engine::TimeDelta dt) {
   {
     engine::RenderTargetTexture::Binder
       bindRenderTarget(mIngameViewPortRenderTarget, mpRenderer);
+    mEntities.systems.system<RenderingSystem>()->mAccumulatedTime = mAccumulatedTime;
     mEntities.systems.update<RenderingSystem>(dt);
     mEntities.systems.update<DebuggingSystem>(dt);
     mHudRenderer.updateAndRender(dt);

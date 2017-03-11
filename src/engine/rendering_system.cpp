@@ -188,7 +188,14 @@ void RenderingSystem::renderSprite(const SpriteData& data) const {
       const auto drawOffsetPx = data::tileVectorToPixelVector(
         frame.mDrawOffset);
 
-      const auto screenPositionPx = topLeftPx + drawOffsetPx - worldToScreenPx;
+      auto screenPositionPx = topLeftPx + drawOffsetPx - worldToScreenPx;
+
+      if (data.mEntity.has_component<components::Physical>()) {
+        const auto& p = *data.mEntity.component<const components::Physical>();
+        const auto v = p.mVelocity * float(mAccumulatedTime / gameFramesToTime(1));
+        screenPositionPx += {int(std::round(v.x * 8)), int(std::round(v.y * 8))};
+      }
+
       frame.mImage.render(mpRenderer, screenPositionPx);
 
       mpRenderer->setOverlayColor(base::Color{});

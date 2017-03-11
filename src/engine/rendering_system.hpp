@@ -56,6 +56,8 @@ public:
   {
   }
 
+  engine::TimeDelta mAccumulatedTime = 0;
+
   void update(
     entityx::EntityManager& es,
     entityx::EventManager& events,
