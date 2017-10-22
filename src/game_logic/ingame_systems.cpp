@@ -76,6 +76,7 @@ IngameSystems::IngameSystems(
       difficulty)
   , mPlayerProjectileSystem(pEntityFactory, pServiceProvider, *pMap)
   , mElevatorSystem(playerEntity, pServiceProvider)
+  , mRespawnCheckpointSystem(playerEntity, &eventManager)
   , mDamageInflictionSystem(pPlayerModel, pServiceProvider, &eventManager)
   , mDynamicGeometrySystem(
       pServiceProvider,
@@ -166,6 +167,7 @@ void IngameSystems::update(
   // TODO: Move all player related systems into the player namespace
   mpPlayerModel->updateTemporaryItemExpiry();
   mElevatorSystem.update(es, inputState);
+  mRespawnCheckpointSystem.update(es);
   mPlayerMovementSystem.update(inputState);
   mPlayerInteractionSystem.update(es);
 

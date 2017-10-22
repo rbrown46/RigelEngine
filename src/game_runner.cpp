@@ -103,6 +103,7 @@ GameRunner::GameRunner(
       data::GameTraits::inGameViewPortSize.height)
 {
   mEventManager.subscribe<rigel::events::ScreenFlash>(*this);
+  mEventManager.subscribe<rigel::events::CheckPointActivated>(*this);
 
   using namespace std::chrono;
   auto before = high_resolution_clock::now();
@@ -295,6 +296,11 @@ void GameRunner::receive(const rigel::events::ScreenFlash& event) {
 }
 
 
+void GameRunner::receive(const rigel::events::CheckPointActivated& event) {
+  mActivatedCheckpoint = CheckpointData{*mpPlayerModel, event.mPosition};
+}
+
+
 void GameRunner::loadLevel(
   const int episode,
   const int levelNumber,
@@ -375,7 +381,11 @@ void GameRunner::handlePlayerDeath() {
     playerState.mState == player::PlayerState::Dead &&
     mpPlayerModel->mHealth <= 0;
   if (playerDead) {
-    restartLevel();
+    if (mActivatedCheckpoint) {
+      restartFromCheckpoint();
+    } else {
+      restartLevel();
+    }
   }
 }
 
@@ -390,6 +400,19 @@ void GameRunner::restartLevel() {
     mLevelData.mInitialActors);
 
   *mpPlayerModel = mPlayerModelAtLevelStart;
+
+  mpSystems->centerViewOnPlayer();
+  updateAndRender(0);
+
+  mpServiceProvider->fadeInScreen();
+}
+
+
+void GameRunner::restartFromCheckpoint() {
+  mpServiceProvider->fadeOutScreen();
+
+  mpPlayerModel->resetForRespawn(mActivatedCheckpoint->mPlayerModel);
+  resetForRespawn(mPlayerEntity, mActivatedCheckpoint->mPosition);
 
   mpSystems->centerViewOnPlayer();
   updateAndRender(0);

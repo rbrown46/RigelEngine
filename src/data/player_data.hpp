@@ -18,6 +18,7 @@
 
 #include "utils/enum_hash.hpp"
 
+#include <algorithm>
 #include <unordered_set>
 
 
@@ -108,6 +109,12 @@ struct PlayerModel {
     mCollectedLetters.clear();
     mInventory.clear();
     mFramesElapsedHavingRapidFire = mFramesElapsedHavingCloak = 0;
+  }
+
+  void resetForRespawn(const PlayerModel& checkpointModel) {
+    mHealth = std::max(2, checkpointModel.mHealth);
+    mWeapon = checkpointModel.mWeapon;
+    mAmmo = checkpointModel.mAmmo;
   }
 
   std::unordered_set<CollectableLetterType> mCollectedLetters;

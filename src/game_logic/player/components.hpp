@@ -129,6 +129,8 @@ struct Interactable {
 
 struct CircuitCardForceField {};
 
+struct RespawnCheckpoint {};
+
 }
 
 }}

@@ -16,24 +16,25 @@
 
 #pragma once
 
-#include "base/color.hpp"
-#include "base/spatial_types.hpp"
+#include "base/warnings.hpp"
 
-namespace rigel { namespace events {
+RIGEL_DISABLE_WARNINGS
+#include <entityx/entityx.h>
+RIGEL_RESTORE_WARNINGS
 
-struct ScreenFlash {
-  ScreenFlash() = default;
-  explicit ScreenFlash(base::Color color)
-    : mColor(color)
-  {
-  }
+namespace rigel { namespace game_logic { namespace interaction {
 
-  base::Color mColor = base::Color{255, 255, 255, 255};
+class RespawnCheckpointSystem {
+public:
+  RespawnCheckpointSystem(
+    entityx::Entity player,
+    entityx::EventManager* pEvents);
+
+  void update(entityx::EntityManager& es);
+
+private:
+  entityx::Entity mPlayer;
+  entityx::EventManager* mpEvents;
 };
 
-
-struct CheckPointActivated {
-  base::Vector mPosition;
-};
-
-}}
+}}}
