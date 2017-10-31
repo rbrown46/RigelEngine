@@ -43,6 +43,12 @@ namespace ex = entityx;
 
 namespace {
 
+const auto NUM_COLLECTABLE_LETTERS = 5;
+const auto CORRECT_LETTER_COLLECTION_BONUS = 100000;
+
+const int SCORE_NUMBER_X_OFFSETS[] = {-3, 0, 3, 0};
+
+
 void spawnScoreNumbers(
   const base::Vector& position,
   int score,
@@ -79,6 +85,25 @@ void spawnScoreNumbers(
     --yOffset;
     spawnFloatingScoreNumber(entityFactory, numberType, position - offset);
   }
+}
+
+
+bool collectionOrderViolated(
+  const std::unordered_set<data::CollectableLetterType>& collectedSoFar,
+  const data::CollectableLetterType newLetter
+) {
+  using LT = data::CollectableLetterType;
+
+  std::unordered_set<data::CollectableLetterType> requiredLetters;
+  switch (newLetter) {
+    case LT::N: requiredLetters = {}; break;
+    case LT::U: requiredLetters = {LT::N}; break;
+    case LT::K: requiredLetters = {LT::N, LT::U}; break;
+    case LT::E: requiredLetters = {LT::N, LT::U, LT::K}; break;
+    case LT::M: requiredLetters = {LT::N, LT::U, LT::K, LT::E}; break;
+  }
+
+  return collectedSoFar != requiredLetters;
 }
 
 }
@@ -154,9 +179,50 @@ void PlayerInteractionSystem::update(entityx::EntityManager& es) {
         base::Vector{playerPos.x, playerPos.y - (playerBBox.size.height - 1)};
 
       if (worldSpaceBbox.intersects(playerBBox)) {
+        bool ignoreScore = false;
         boost::optional<data::SoundId> soundToPlay;
 
-        if (collectable.mGivenScore) {
+        if (collectable.mGivenCollectableLetter) {
+          auto& collectedLetters = mpPlayerModel->mCollectedLetters;
+
+          const auto givenLetter = *collectable.mGivenCollectableLetter;
+          mpPlayerModel->mLetterCollectionOrderViolated |=
+            collectionOrderViolated(collectedLetters, givenLetter);
+          collectedLetters.insert(givenLetter);
+
+          if (
+            collectedLetters.size() == NUM_COLLECTABLE_LETTERS &&
+            !mpPlayerModel->mLetterCollectionOrderViolated
+          ) {
+            soundToPlay = SoundId::LettersCollectedCorrectly;
+            mpPlayerModel->mScore += CORRECT_LETTER_COLLECTION_BONUS;
+            ignoreScore = true;
+
+            for (int i = 0; i < 10; ++i) {
+              const auto offset = base::Vector{
+                SCORE_NUMBER_X_OFFSETS[i % 4],
+                -i};
+              spawnFloatingScoreNumber(
+                *mpEntityFactory, ScoreNumberType::S10000, pos + offset);
+            }
+          } else {
+            soundToPlay = SoundId::ItemPickup;
+
+            // In the original game, letters only spawn a floating '100',
+            // but give 10100 points. This is likely a bug, since the hint
+            // message given when collecting the letters in the wrong order
+            // mentions getting 10000 points, but there are no additional
+            // 10000 points given beyond what you already get when collecting a
+            // single letter. This makes me suspect that you're actually supposed
+            // to only get 100 for a single letter, and get the 10000 if you
+            // collect them out of order.
+            spawnFloatingScoreNumber(
+              *mpEntityFactory, ScoreNumberType::S100, pos);
+          }
+        }
+
+
+        if (collectable.mGivenScore && !ignoreScore) {
           const auto score = *collectable.mGivenScore;
           assert(score > 0);
           mpPlayerModel->mScore += score;
@@ -189,13 +255,6 @@ void PlayerInteractionSystem::update(entityx::EntityManager& es) {
           soundToPlay = itemType == InventoryItemType::RapidFire ?
             SoundId::WeaponPickup :
             SoundId::ItemPickup;
-        }
-
-        if (collectable.mGivenCollectableLetter) {
-          mpPlayerModel->mCollectedLetters.insert(
-            *collectable.mGivenCollectableLetter);
-
-          soundToPlay = SoundId::ItemPickup;
         }
 
         if (soundToPlay) {

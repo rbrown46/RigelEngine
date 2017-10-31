@@ -110,8 +110,10 @@ struct PlayerModel {
   int mScore = 0;
   int mAmmo = MAX_AMMO;
   int mHealth = MAX_HEALTH;
+
   int mFramesElapsedHavingRapidFire = 0;
   int mFramesElapsedHavingCloak = 0;
+  bool mLetterCollectionOrderViolated = false;
 };
 
 
