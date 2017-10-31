@@ -935,7 +935,7 @@ void EntityFactory::configureEntity(
     case 155: // Collectable letter N in blue box
       {
         CollectableItem item;
-        item.mGivenScore = 101000;
+        item.mGivenScore = 10100;
         item.mGivenCollectableLetter = CollectableLetterType::N;
         item.mSpawnScoreNumbers = false;
         configureItemBox(
@@ -949,7 +949,7 @@ void EntityFactory::configureEntity(
     case 156: // Collectable letter U in blue box
       {
         CollectableItem item;
-        item.mGivenScore = 101000;
+        item.mGivenScore = 10100;
         item.mGivenCollectableLetter = CollectableLetterType::U;
         item.mSpawnScoreNumbers = false;
         configureItemBox(
@@ -963,7 +963,7 @@ void EntityFactory::configureEntity(
     case 157: // Collectable letter K in blue box
       {
         CollectableItem item;
-        item.mGivenScore = 101000;
+        item.mGivenScore = 10100;
         item.mGivenCollectableLetter = CollectableLetterType::K;
         item.mSpawnScoreNumbers = false;
         configureItemBox(
@@ -977,7 +977,7 @@ void EntityFactory::configureEntity(
     case 158: // Collectable letter E in blue box
       {
         CollectableItem item;
-        item.mGivenScore = 101000;
+        item.mGivenScore = 10100;
         item.mGivenCollectableLetter = CollectableLetterType::E;
         item.mSpawnScoreNumbers = false;
         configureItemBox(
@@ -991,7 +991,7 @@ void EntityFactory::configureEntity(
     case 187: // Collectable letter M in blue box
       {
         CollectableItem item;
-        item.mGivenScore = 101000;
+        item.mGivenScore = 10100;
         item.mGivenCollectableLetter = CollectableLetterType::M;
         item.mSpawnScoreNumbers = false;
         configureItemBox(
